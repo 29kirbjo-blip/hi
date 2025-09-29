@@ -1,151 +1,61 @@
-<!DOCTYPE html>
 <html>
     <head>
-        <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
-        <meta charset="utf-8">
-        <title>A-Frame with Countdown and Background Music</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-              body { margin: 0; overflow: hidden; }
-        
-              #start-button {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                padding: 1em 2em;
-                font-size: 1.5em;
-                background: #222;
-                color: white;
-                border: none;
-                cursor: pointer;
-                z-index: 10;
-              }
-        
-              #countdown {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 8em;
-                font-weight: bold;
-                color: white;
-                display: none;
-                z-index: 9;
-                text-shadow: 4px 4px 10px rgba(0,0,0,0.7);
-              }
-     </style>
-
-
+        <title>Colliding Shapes</title>
+        <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
+        <script src="https://cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
     </head>
     <body>
-        <!-- Audio element -->
-        <audio id="bg-music" loop>
-            <source src="https://github.com/29kirbjo-blip/hi/raw/refs/heads/main/entersnadman.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
+        <a-scene physics="gravity:-9.8">
+            <a-sky color="lightblue"></a-sky>
+            <a-plane static-body
+                color="tan"
+                position="0 0 0"
+                width="60"
+                height="60"
+                rotation="-90 0 0"
+            ></a-plane>
+            <a-box static-body
+                position="-10 4 -5"
+                width="4"
+                height="2"
+                depth="1"
+                rotation="20 10 -20"
+                color="purple">
+            </a-box>
+            <a-sphere dynamic-body
+                position="-10 10 -5"
+                color="red"
+                radius="4"
+                dur;500
+            ></a-sphere> 
+            <a-box  dynamic-body
+            color="black"
+            position="5 2 -4"
+            width="4"
+            hight="4"
+            rotation="0 0 90"></a-box>
+           
+            <a-box  dynamic-body
+            color="black"
+            position="3 2 -4"
+            width="4"
+            hight="4"
+            rotation="0 0 90"></a-box>
+              <a-box  dynamic-body
+            color="black"
+            position="8 2 -4"
+            width="4"
+            hight="4"
+            rotation="0 0 90" ></a-box>
+                  <a-sphere dynamic-body
+                  color="red"
+                  radius="1"
+                  position="13 2 -4"
+                  ></a-sphere>
+                  
+                  <a-torus color="#43A367" position="17 2 -4" rotation="0 90 0" arc="360" radius="2" radius-tubular="0.1"></a-torus>
 
-        <!-- UI elements -->
-        <button id="start-button">Start Experience</button>
-        <div id="countdown">3</div>
-        
-        <a-scene>
-        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
-        <a-camera>
-             <a-cursor></a-cursor>
-        </a-camera>
-        <a-sphere
-    position="0 1 -5"
-    radius="0.5"
-    color="#803d8c"
-    animation__1="
-        property: position;
-        from: 0 0 0;
-        to: 1 0 -7;
-        dur:4500
-        loop: true
-    "
-    animation__2="
-    property: scale;
-    from:1;
-    to: 0;
-    startEvents:click
-    "
-    ></a-sphere>
-    <a-sphere
-    position="0 1 -5"
-    radius="0.5"
-    color="#803d8c"
-    
-    animation="
-        property: position;
-        from: 0 1 -5;
-        to: 1 1 -5;
-        loop: true
-    "
-    animation__2="
-    property: scale;
-    from:1;
-    to: 0;
-    startEvents:click
-    "
-     ></a-sphere>
-     <a-sphere
-    position="0 1 -5"
-    radius="0.5"
-    color="#803d8c"
-    
-    animation="
-        property: position;
-        from: 8 1 -5;
-        to: 1 1 -5;
-        dur;200
-        loop: true
-    "
-
-     ></a-sphere>
-     <a-sphere
-    position="0 1 -5"
-    radius="0.5"
-    color="#803d8c"
-    
-    animation="
-        property: position;
-        from: 8 1 -5;
-        to: -5 1 -5;
-        dur:4500
-        loop: true
-    "
-></a-sphere>
-        </a-scene>
-           <!-- JavaScript -->
-    <script>
-      const music = document.getElementById('bg-music');
-      const startBtn = document.getElementById('start-button');
-      const countdownEl = document.getElementById('countdown');
-
-      startBtn.addEventListener('click', () => {
-        startBtn.style.display = 'none';
-        startCountdown();
-      });
-
-      function startCountdown() {
-        let count = 3;
-        countdownEl.style.display = 'block';
-        countdownEl.textContent = count;
-
-        const interval = setInterval(() => {
-          count--;
-          if (count > 0) {
-            countdownEl.textContent = count;
-          } else {
-            clearInterval(interval);
-            countdownEl.style.display = 'none';
-            music.play();
-          }
-        }, 1000);
-      }
-    </script>
-
-    </body>
+    </a-scene>
+  </body>
 </html>
+
