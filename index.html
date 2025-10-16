@@ -6,31 +6,19 @@
 </head>
 <body>
     <a-scene background="color: #87CEEB" vr-mode-ui="enabled: true">
-        <!-- Audio Assets -->
-        <a-assets>
-            <!-- Hit sound using Web Audio API generated sound -->
-            <audio id="hitSound" preload="auto"></audio>
-        </a-assets>
-
         <!-- Game Instructions (shown at start) -->
         <a-entity id="instructions" position="0 2 -3">
             <a-text value="VR WHACK-A-MOLE" position="0 1.5 0" align="center" color="black" scale="3 3 3"></a-text>
             <a-text value="HOW TO PLAY:" position="0 1 0" align="center" color="darkblue" scale="2 2 2"></a-text>
             <a-text value="• Look at moles and click to hit them" position="0 0.5 0" align="center" color="black" scale="1.5 1.5 1.5"></a-text>
-            <a-text value="• BOXES = 10 points, SPHERES = 20 points!" position="0 0.2 0" align="center" color="darkgreen" scale="1.5 1.5 1.5"></a-text>
+            <a-text value="• Hit moles when they pop up for points" position="0 0.2 0" align="center" color="black" scale="1.5 1.5 1.5"></a-text>
             <a-text value="• You have 30 seconds to play" position="0 -0.1 0" align="center" color="black" scale="1.5 1.5 1.5"></a-text>
             
             <a-text value="WIN: Score 100+ points" position="0 -0.7 0" align="center" color="green" scale="2 2 2"></a-text>
             <a-text value="LOSE: Score under 100" position="0 -1 0" align="center" color="red" scale="2 2 2"></a-text>
             
-            <a-text value="Look at the START button to begin!" position="0 -1.5 0" align="center" color="purple" scale="1.8 1.8 1.8"></a-text>
-            
-            <!-- Start Button -->
-            <a-box id="startButton" class="clickable" position="0 -2.2 0" width="2" height="0.5" depth="0.2" color="green"
-                   animation__hover="property: scale; startEvents: mouseenter; from: 1 1 1; to: 1.1 1.1 1.1; dur: 200"
-                   animation__unhover="property: scale; startEvents: mouseleave; from: 1.1 1.1 1.1; to: 1 1 1; dur: 200">
-                <a-text value="START GAME" position="0 0 0.11" align="center" color="white" scale="2 2 2"></a-text>
-            </a-box>
+            <a-text value="PRESS SPACEBAR TO START!" position="0 -1.5 0" align="center" color="purple" scale="2 2 2"
+                    animation="property: scale; to: 2.2 2.2 2.2; dur: 1000; dir: alternate; loop: true"></a-text>
         </a-entity>
 
         <!-- Game UI (hidden initially) -->
@@ -38,68 +26,54 @@
             <a-text id="score" value="Score: 0" position="-2 3 -3" color="black" scale="2 2 2"></a-text>
             <a-text id="timer" value="Time: 30" position="2 3 -3" color="black" scale="2 2 2"></a-text>
             <a-text id="target" value="Target: 100 points to WIN!" position="0 3 -3" align="center" color="purple" scale="1.5 1.5 1.5"></a-text>
-            
-            <!-- Point values legend -->
-            <a-text value="📦 Boxes = 10pts  🔴 Spheres = 20pts" position="0 2.5 -3" align="center" color="darkblue" scale="1.2 1.2 1.2"></a-text>
         </a-entity>
         
         <!-- Ground -->
         <a-plane position="0 0 -4" rotation="-90 0 0" width="10" height="10" color="#4CC417"></a-plane>
         
-        <!-- Mole holes (visual indicators) -->
-        <a-cylinder id="hole1" position="-2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
-        <a-cylinder id="hole2" position="0 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
-        <a-cylinder id="hole3" position="2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
-        <a-cylinder id="hole4" position="-2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
-        <a-cylinder id="hole5" position="0 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
-        <a-cylinder id="hole6" position="2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <!-- Mole holes -->
+        <a-cylinder position="-2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder position="0 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder position="2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder position="-2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder position="0 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder position="2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
         
-        <!-- BOX MOLES (10 points each) -->
-        <a-box id="mole1" class="mole" data-points="10" data-shape="box" position="-2 -1 -2" width="0.8" height="0.8" depth="0.8" color="#8B4513" 
+        <!-- Moles -->
+        <a-box id="mole1" class="mole" position="-2 -1 -2" width="0.8" height="0.8" depth="0.8" color="#8B4513" 
                animation__pop="property: position; to: -2 0.5 -2; dur: 300; startEvents: popup"
                animation__hide="property: position; to: -2 -1 -2; dur: 300; startEvents: hidedown">
-            <!-- Point indicator -->
-            <a-text value="10" position="0 0.6 0" align="center" color="yellow" scale="0.8 0.8 0.8"></a-text>
         </a-box>
         
-        <!-- SPHERE MOLES (20 points each) - More valuable! -->
-        <a-sphere id="mole2" class="mole" data-points="20" data-shape="sphere" position="0 -1 -2" radius="0.4" color="#FF6B6B"
+        <a-sphere id="mole2" class="mole" position="0 -1 -2" radius="0.4" color="#654321"
                   animation__pop="property: position; to: 0 0.5 -2; dur: 300; startEvents: popup"
                   animation__hide="property: position; to: 0 -1 -2; dur: 300; startEvents: hidedown">
-            <!-- Point indicator -->
-            <a-text value="20" position="0 0.6 0" align="center" color="gold" scale="1 1 1"></a-text>
         </a-sphere>
         
-        <a-box id="mole3" class="mole" data-points="10" data-shape="box" position="2 -1 -2" width="0.8" height="0.8" depth="0.8" color="#A0522D"
+        <a-box id="mole3" class="mole" position="2 -1 -2" width="0.8" height="0.8" depth="0.8" color="#A0522D"
                animation__pop="property: position; to: 2 0.5 -2; dur: 300; startEvents: popup"
                animation__hide="property: position; to: 2 -1 -2; dur: 300; startEvents: hidedown">
-            <a-text value="10" position="0 0.6 0" align="center" color="yellow" scale="0.8 0.8 0.8"></a-text>
         </a-box>
         
-        <a-sphere id="mole4" class="mole" data-points="20" data-shape="sphere" position="-2 -1 -4" radius="0.4" color="#4ECDC4"
+        <a-sphere id="mole4" class="mole" position="-2 -1 -4" radius="0.4" color="#8B4513"
                   animation__pop="property: position; to: -2 0.5 -4; dur: 300; startEvents: popup"
                   animation__hide="property: position; to: -2 -1 -4; dur: 300; startEvents: hidedown">
-            <a-text value="20" position="0 0.6 0" align="center" color="gold" scale="1 1 1"></a-text>
         </a-sphere>
         
-        <a-box id="mole5" class="mole" data-points="10" data-shape="box" position="0 -1 -4" width="0.8" height="0.8" depth="0.8" color="#654321"
+        <a-box id="mole5" class="mole" position="0 -1 -4" width="0.8" height="0.8" depth="0.8" color="#654321"
                animation__pop="property: position; to: 0 0.5 -4; dur: 300; startEvents: popup"
                animation__hide="property: position; to: 0 -1 -4; dur: 300; startEvents: hidedown">
-            <a-text value="10" position="0 0.6 0" align="center" color="yellow" scale="0.8 0.8 0.8"></a-text>
         </a-box>
         
-        <a-sphere id="mole6" class="mole" data-points="20" data-shape="sphere" position="2 -1 -4" radius="0.4" color="#9B59B6"
+        <a-sphere id="mole6" class="mole" position="2 -1 -4" radius="0.4" color="#A0522D"
                   animation__pop="property: position; to: 2 0.5 -4; dur: 300; startEvents: popup"
                   animation__hide="property: position; to: 2 -1 -4; dur: 300; startEvents: hidedown">
-            <a-text value="20" position="0 0.6 0" align="center" color="gold" scale="1 1 1"></a-text>
         </a-sphere>
 
-        <!-- Camera with cursor for interaction -->
+        <!-- Camera -->
         <a-entity id="rig" position="0 1.6 1">
             <a-camera look-controls wasd-controls>
-                <a-cursor color="red" raycaster="objects: .mole, .clickable" 
-                         animation__click="property: scale; startEvents: click; from: 1 1 1; to: 1.2 1.2 1.2; dur: 150; dir: alternate; easing: easeInOutQuad">
-                </a-cursor>
+                <a-cursor color="red" raycaster="objects: .mole"></a-cursor>
             </a-camera>
         </a-entity>
     </a-scene>
@@ -114,125 +88,81 @@
         const WINNING_SCORE = 100;
         let audioContext;
         
-        // Get DOM elements
-        const scoreDisplay = document.getElementById('score');
-        const timerDisplay = document.getElementById('timer');
-        const targetDisplay = document.getElementById('target');
-        const moles = document.querySelectorAll('.mole');
-        const startButton = document.getElementById('startButton');
-        const instructions = document.getElementById('instructions');
-        const gameUI = document.getElementById('gameUI');
-        
-        // Create audio context for sound effects
+        // Audio functions
         function initAudio() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
         
-        // Function to play hit sound (different pitch for different points)
-        function playHitSound(points) {
+        function playHitSound() {
             if (!audioContext) return;
-            
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
-            
-            if (points === 20) {
-                oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.15);
-            } else {
-                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-            }
-            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-            
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.2);
         }
         
-        // Function to play victory sound
         function playVictorySound() {
             if (!audioContext) return;
-            
-            const notes = [
-                { freq: 523, time: 0 },     // C5
-                { freq: 659, time: 0.2 },   // E5
-                { freq: 784, time: 0.4 },   // G5
-                { freq: 1047, time: 0.6 },  // C6
-                { freq: 1319, time: 0.8 },  // E6
-                { freq: 1568, time: 1.0 }   // G6
-            ];
-            
-            notes.forEach(note => {
+            const notes = [523, 659, 784, 1047, 1319, 1568];
+            notes.forEach((freq, i) => {
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
-                
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime + note.time);
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime + note.time);
-                gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + note.time + 0.05);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.time + 0.3);
-                
-                oscillator.start(audioContext.currentTime + note.time);
-                oscillator.stop(audioContext.currentTime + note.time + 0.3);
+                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.2);
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime + i * 0.2);
+                gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + i * 0.2 + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.2 + 0.3);
+                oscillator.start(audioContext.currentTime + i * 0.2);
+                oscillator.stop(audioContext.currentTime + i * 0.2 + 0.3);
             });
         }
         
-        // Function to play lose sound
         function playLoseSound() {
             if (!audioContext) return;
-            
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
-            
             oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
             oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 1);
-            
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-            
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 1);
         }
         
-        // Set up event listeners when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait a bit for A-Frame to initialize
-            setTimeout(() => {
-                console.log('Setting up start button event listener');
-                
-                // Start button click handler
-                if (startButton) {
-                    startButton.addEventListener('click', function() {
-                        console.log('Start button clicked!');
-                        if (!gameStarted) {
-                            initAudio();
-                            instructions.setAttribute('visible', 'false');
-                            gameUI.setAttribute('visible', 'true');
-                            startGame();
-                        }
-                    });
-                    console.log('Start button event listener added');
-                } else {
-                    console.log('Start button not found!');
-                }
-            }, 1000);
+        // SPACEBAR to start - This will definitely work!
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && !gameStarted) {
+                event.preventDefault();
+                initAudio();
+                document.getElementById('instructions').setAttribute('visible', 'false');
+                document.getElementById('gameUI').setAttribute('visible', 'true');
+                startGame();
+            }
         });
+        
+        // Set up mole click handlers after scene loads
+        setTimeout(() => {
+            document.querySelectorAll('.mole').forEach(mole => {
+                mole.addEventListener('click', function() {
+                    hitMole(this);
+                });
+            });
+        }, 2000);
         
         // Game functions
         function startGame() {
-            console.log('Starting game...');
+            console.log('Game started!');
             gameRunning = true;
             gameStarted = true;
             score = 0;
@@ -242,7 +172,103 @@
             const gameTimer = setInterval(() => {
                 timeLeft--;
                 updateDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(gameTimer);
+                    endGame();
+                }
+            }, 1000);
+            
+            spawnMoles();
+        }
+        
+        function spawnMoles() {
+            if (!gameRunning) return;
+            const delay = Math.random() * 2000 + 1000;
+            setTimeout(() => {
+                if (gameRunning) {
+                    popRandomMole();
+                    spawnMoles();
+                }
+            }, delay);
+        }
+        
+        function popRandomMole() {
+            const moles = document.querySelectorAll('.mole');
+            const availableMoles = Array.from(moles).filter(mole => !activeMoles.includes(mole));
+            if (availableMoles.length === 0) return;
+            
+            const randomMole = availableMoles[Math.floor(Math.random() * availableMoles.length)];
+            activeMoles.push(randomMole);
+            randomMole.emit('popup');
+            
+            setTimeout(() => {
+                if (activeMoles.includes(randomMole)) {
+                    hideMole(randomMole);
+                }
+            }, 2000);
+        }
+        
+        function hideMole(mole) {
+            mole.emit('hidedown');
+            activeMoles = activeMoles.filter(m => m !== mole);
+        }
+        
+        function hitMole(mole) {
+            if (activeMoles.includes(mole)) {
+                score += 10;
+                updateDisplay();
+                hideMole(mole);
+                playHitSound();
                 
-
+                const originalColor = mole.getAttribute('color');
+                mole.setAttribute('color', 'red');
+                setTimeout(() => {
+                    mole.setAttribute('color', originalColor);
+                }, 200);
+            }
+        }
+        
+        function updateDisplay() {
+            document.getElementById('score').setAttribute('value', `Score: ${score}`);
+            document.getElementById('timer').setAttribute('value', `Time: ${timeLeft}`);
+            
+            const remaining = Math.max(0, WINNING_SCORE - score);
+            const targetDisplay = document.getElementById('target');
+            if (remaining > 0) {
+                targetDisplay.setAttribute('value', `Need ${remaining} more points to WIN!`);
+                targetDisplay.setAttribute('color', 'purple');
+            } else {
+                targetDisplay.setAttribute('value', `TARGET REACHED! You're winning!`);
+                targetDisplay.setAttribute('color', 'green');
+            }
+        }
+        
+        function endGame() {
+            gameRunning = false;
+            activeMoles = [];
+            
+            document.querySelectorAll('.mole').forEach(mole => {
+                mole.emit('hidedown');
+            });
+            
+            setTimeout(() => {
+                let message;
+                if (score >= WINNING_SCORE) {
+                    playVictorySound();
+                    message = `🎉 YOU WIN! 🎉\nFinal Score: ${score}\nYou reached the target!`;
+                } else {
+                    playLoseSound();
+                    message = `😔 YOU LOSE 😔\nFinal Score: ${score}\nYou needed ${WINNING_SCORE} points to win.`;
+                }
+                
+                alert(message);
+                gameStarted = false;
+                document.getElementById('instructions').setAttribute('visible', 'true');
+                document.getElementById('gameUI').setAttribute('visible', 'false');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
 
 
