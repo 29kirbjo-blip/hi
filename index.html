@@ -17,8 +17,13 @@
             <a-text value="WIN: Score 100+ points" position="0 -0.7 0" align="center" color="green" scale="2 2 2"></a-text>
             <a-text value="LOSE: Score under 100" position="0 -1 0" align="center" color="red" scale="2 2 2"></a-text>
             
-            <a-text value="PRESS SPACEBAR TO START!" position="0 -1.5 0" align="center" color="purple" scale="2 2 2"
-                    animation="property: scale; to: 2.2 2.2 2.2; dur: 1000; dir: alternate; loop: true"></a-text>
+            <a-text value="Look at the START button and click!" position="0 -1.5 0" align="center" color="purple" scale="1.8 1.8 1.8"></a-text>
+            
+            <!-- VR Start Button -->
+            <a-box id="startButton" position="0 -2.2 0" width="2" height="0.5" depth="0.2" color="green"
+                   animation="property: material.emissive; to: #004400; dur: 1000; dir: alternate; loop: true">
+                <a-text value="START GAME" position="0 0 0.11" align="center" color="white" scale="2 2 2"></a-text>
+            </a-box>
         </a-entity>
 
         <!-- Game UI (hidden initially) -->
@@ -70,10 +75,12 @@
                   animation__hide="property: position; to: 2 -1 -4; dur: 300; startEvents: hidedown">
         </a-sphere>
 
-        <!-- Camera -->
+        <!-- Camera with cursor -->
         <a-entity id="rig" position="0 1.6 1">
             <a-camera look-controls wasd-controls>
-                <a-cursor color="red" raycaster="objects: .mole"></a-cursor>
+                <a-cursor color="red" raycaster="objects: .mole, #startButton" 
+                         animation__click="property: scale; startEvents: click; from: 1 1 1; to: 1.2 1.2 1.2; dur: 150; dir: alternate; easing: easeInOutQuad">
+                </a-cursor>
             </a-camera>
         </a-entity>
     </a-scene>
@@ -140,7 +147,60 @@
             oscillator.stop(audioContext.currentTime + 1);
         }
         
-        // SPACEBAR to start - This will definitely work!
+        // Custom A-Frame component for reliable click handling
+        AFRAME.registerComponent('click-handler', {
+            init: function () {
+                const el = this.el;
+                
+                el.addEventListener('click', function (evt) {
+                    console.log('Element clicked:', el.id);
+                    
+                    if (el.id === 'startButton' && !gameStarted) {
+                        console.log('Starting game from button click');
+                        initAudio();
+                        document.getElementById('instructions').setAttribute('visible', 'false');
+                        document.getElementById('gameUI').setAttribute('visible', 'true');
+                        startGame();
+                    } else if (el.classList.contains('mole')) {
+                        hitMole(el);
+                    }
+                });
+                
+                // Visual feedback on hover
+                el.addEventListener('mouseenter', function () {
+                    if (el.id === 'startButton') {
+                        el.setAttribute('scale', '1.1 1.1 1.1');
+                    }
+                });
+                
+                el.addEventListener('mouseleave', function () {
+                    if (el.id === 'startButton') {
+                        el.setAttribute('scale', '1 1 1');
+                    }
+                });
+            }
+        });
+        
+        // Add click handlers after scene loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                // Add click handler to start button
+                const startButton = document.getElementById('startButton');
+                if (startButton) {
+                    startButton.setAttribute('click-handler', '');
+                    console.log('Start button click handler added');
+                }
+                
+                // Add click handlers to moles
+                document.querySelectorAll('.mole').forEach(mole => {
+                    mole.setAttribute('click-handler', '');
+                });
+                
+                console.log('All click handlers set up');
+            }, 2000);
+        });
+        
+        // Backup: Spacebar for desktop testing
         document.addEventListener('keydown', function(event) {
             if (event.code === 'Space' && !gameStarted) {
                 event.preventDefault();
@@ -150,15 +210,6 @@
                 startGame();
             }
         });
-        
-        // Set up mole click handlers after scene loads
-        setTimeout(() => {
-            document.querySelectorAll('.mole').forEach(mole => {
-                mole.addEventListener('click', function() {
-                    hitMole(this);
-                });
-            });
-        }, 2000);
         
         // Game functions
         function startGame() {
@@ -235,38 +286,7 @@
             const remaining = Math.max(0, WINNING_SCORE - score);
             const targetDisplay = document.getElementById('target');
             if (remaining > 0) {
-                targetDisplay.setAttribute('value', `Need ${remaining} more points to WIN!`);
-                targetDisplay.setAttribute('color', 'purple');
-            } else {
-                targetDisplay.setAttribute('value', `TARGET REACHED! You're winning!`);
-                targetDisplay.setAttribute('color', 'green');
-            }
-        }
-        
-        function endGame() {
-            gameRunning = false;
-            activeMoles = [];
-            
-            document.querySelectorAll('.mole').forEach(mole => {
-                mole.emit('hidedown');
-            });
-            
-            setTimeout(() => {
-                let message;
-                if (score >= WINNING_SCORE) {
-                    playVictorySound();
-                    message = `🎉 YOU WIN! 🎉\nFinal Score: ${score}\nYou reached the target!`;
-                } else {
-                    playLoseSound();
-                    message = `😔 YOU LOSE 😔\nFinal Score: ${score}\nYou needed ${WINNING_SCORE} points to win.`;
-                }
-                
-                alert(message);
-                gameStarted = false;
-                document.getElementById('instructions').setAttribute('visible', 'true');
-                document.getElementById('gameUI').setAttribute('visible', 'false');
-            }, 1000);
-        }
+                targetDisplay.setAttribute('value', `\
     </script>
 </body>
 </html>
