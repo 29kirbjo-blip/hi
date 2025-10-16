@@ -111,7 +111,7 @@
         let gameRunning = false;
         let gameStarted = false;
         let activeMoles = [];
-        const WINNING_SCORE = 100; // Points needed to win
+        const WINNING_SCORE = 100;
         let audioContext;
         
         // Get DOM elements
@@ -140,13 +140,10 @@
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // Different sound for different point values
             if (points === 20) {
-                // Higher, more exciting sound for spheres
                 oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
                 oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.15);
             } else {
-                // Standard sound for boxes
                 oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
                 oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
             }
@@ -158,25 +155,79 @@
             oscillator.stop(audioContext.currentTime + 0.2);
         }
         
-        // Wait for scene to load before setting up event listeners
-        document.querySelector('a-scene').addEventListener('loaded', function() {
-            console.log('Scene loaded, setting up start button');
+        // Function to play victory sound
+        function playVictorySound() {
+            if (!audioContext) return;
             
-            // Start button click handler
-            startButton.addEventListener('click', function() {
-                console.log('Start button clicked!');
-                if (!gameStarted) {
-                    // Initialize audio on first user interaction
-                    initAudio();
-                    
-                    // Hide instructions and show game UI
-                    instructions.setAttribute('visible', 'false');
-                    gameUI.setAttribute('visible', 'true');
-                    
-                    // Start the game
-                    startGame();
-                }
+            const notes = [
+                { freq: 523, time: 0 },     // C5
+                { freq: 659, time: 0.2 },   // E5
+                { freq: 784, time: 0.4 },   // G5
+                { freq: 1047, time: 0.6 },  // C6
+                { freq: 1319, time: 0.8 },  // E6
+                { freq: 1568, time: 1.0 }   // G6
+            ];
+            
+            notes.forEach(note => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime + note.time);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime + note.time);
+                gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + note.time + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.time + 0.3);
+                
+                oscillator.start(audioContext.currentTime + note.time);
+                oscillator.stop(audioContext.currentTime + note.time + 0.3);
             });
+        }
+        
+        // Function to play lose sound
+        function playLoseSound() {
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+        }
+        
+        // Set up event listeners when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for A-Frame to initialize
+            setTimeout(() => {
+                console.log('Setting up start button event listener');
+                
+                // Start button click handler
+                if (startButton) {
+                    startButton.addEventListener('click', function() {
+                        console.log('Start button clicked!');
+                        if (!gameStarted) {
+                            initAudio();
+                            instructions.setAttribute('visible', 'false');
+                            gameUI.setAttribute('visible', 'true');
+                            startGame();
+                        }
+                    });
+                    console.log('Start button event listener added');
+                } else {
+                    console.log('Start button not found!');
+                }
+            }, 1000);
         });
         
         // Game functions
@@ -188,82 +239,10 @@
             timeLeft = 30;
             updateDisplay();
             
-            // Start the game timer
             const gameTimer = setInterval(() => {
                 timeLeft--;
                 updateDisplay();
                 
-                if (timeLeft <= 0) {
-                    clearInterval(gameTimer);
-                    endGame();
-                }
-            }, 1000);
-            
-            // Start spawning moles
-            spawnMoles();
-        }
-        
-        function spawnMoles() {
-            if (!gameRunning) return;
-            
-            // Random delay between spawns (1-3 seconds)
-            const delay = Math.random() * 2000 + 1000;
-            
-            setTimeout(() => {
-                if (gameRunning) {
-                    popRandomMole();
-                    spawnMoles(); // Continue spawning
-                }
-            }, delay);
-        }
-        
-        function popRandomMole() {
-            // Get available moles (not currently active)
-            const availableMoles = Array.from(moles).filter(mole => !activeMoles.includes(mole));
-            
-            if (availableMoles.length === 0) return;
-            
-            // Pick a random mole
-            const randomMole = availableMoles[Math.floor(Math.random() * availableMoles.length)];
-            
-            // Add to active moles
-            activeMoles.push(randomMole);
-            
-            // Pop up the mole
-            randomMole.emit('popup');
-            
-            // Hide the mole after 2 seconds
-            setTimeout(() => {
-                if (activeMoles.includes(randomMole)) {
-                    hideMole(randomMole);
-                }
-            }, 2000);
-        }
-        
-        function hideMole(mole) {
-            mole.emit('hidedown');
-            activeMoles = activeMoles.filter(m => m !== mole);
-        }
-        
-        function hitMole(mole) {
-            if (activeMoles.includes(mole)) {
-                // Get points based on shape
-                const points = parseInt(mole.getAttribute('data-points')) || 10;
-                score += points;
-                updateDisplay();
-                hideMole(mole);
-                
-                // Play hit sound effect with different pitch for different points
-                playHitSound(points);
-                
-                // Visual feedback - change color briefly
-                const originalColor = mole.getAttribute('color');
-                mole.setAttribute('color', 'red');
-                setTimeout(() => {
-                    mole.setAttribute('color', originalColor);
-                }, 200);
-                
-                // Create floating score indicator
-                
+
 
 
