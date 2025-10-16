@@ -14,38 +14,28 @@
 
         <!-- Game Instructions (shown at start) -->
         <a-entity id="instructions" position="0 2 -3">
-            <a-text value="VR WHACK-A-MOLE" position="0 1.5 0" align="center" color="black" scale="3 3 3"
-                    animation="property: rotation; to: 0 5 0; dur: 2000; dir: alternate; loop: true"></a-text>
+            <a-text value="VR WHACK-A-MOLE" position="0 1.5 0" align="center" color="black" scale="3 3 3"></a-text>
             <a-text value="HOW TO PLAY:" position="0 1 0" align="center" color="darkblue" scale="2 2 2"></a-text>
             <a-text value="• Look at moles and click to hit them" position="0 0.5 0" align="center" color="black" scale="1.5 1.5 1.5"></a-text>
             <a-text value="• BOXES = 10 points, SPHERES = 20 points!" position="0 0.2 0" align="center" color="darkgreen" scale="1.5 1.5 1.5"></a-text>
             <a-text value="• You have 30 seconds to play" position="0 -0.1 0" align="center" color="black" scale="1.5 1.5 1.5"></a-text>
             
-            <a-text value="WIN: Score 100+ points" position="0 -0.7 0" align="center" color="green" scale="2 2 2"
-                    animation="property: material.emissive; to: #004400; dur: 1000; dir: alternate; loop: true"></a-text>
-            <a-text value="LOSE: Score under 100" position="0 -1 0" align="center" color="red" scale="2 2 2"
-                    animation="property: material.emissive; to: #440000; dur: 1200; dir: alternate; loop: true"></a-text>
+            <a-text value="WIN: Score 100+ points" position="0 -0.7 0" align="center" color="green" scale="2 2 2"></a-text>
+            <a-text value="LOSE: Score under 100" position="0 -1 0" align="center" color="red" scale="2 2 2"></a-text>
             
-            <a-text value="Look at the START button to begin!" position="0 -1.5 0" align="center" color="purple" scale="1.8 1.8 1.8"
-                    animation="property: scale; to: 2 2 2; dur: 800; dir: alternate; loop: true"></a-text>
+            <a-text value="Look at the START button to begin!" position="0 -1.5 0" align="center" color="purple" scale="1.8 1.8 1.8"></a-text>
             
-            <!-- Start Button with enhanced effects -->
+            <!-- Start Button -->
             <a-box id="startButton" class="clickable" position="0 -2.2 0" width="2" height="0.5" depth="0.2" color="green"
                    animation__hover="property: scale; startEvents: mouseenter; from: 1 1 1; to: 1.1 1.1 1.1; dur: 200"
-                   animation__unhover="property: scale; startEvents: mouseleave; from: 1.1 1.1 1.1; to: 1 1 1; dur: 200"
-                   animation__glow="property: material.emissive; to: #004400; dur: 1000; dir: alternate; loop: true"
-                   animation__pulse="property: scale; to: 1.05 1.05 1.05; dur: 600; dir: alternate; loop: true">
+                   animation__unhover="property: scale; startEvents: mouseleave; from: 1.1 1.1 1.1; to: 1 1 1; dur: 200">
                 <a-text value="START GAME" position="0 0 0.11" align="center" color="white" scale="2 2 2"></a-text>
-                <!-- Glowing ring around button -->
-                <a-ring position="0 0 -0.15" radius-inner="1.2" radius-outer="1.4" color="yellow" opacity="0.6"
-                        animation="property: rotation; to: 0 0 360; dur: 3000; loop: true; easing: linear"></a-ring>
             </a-box>
         </a-entity>
 
         <!-- Game UI (hidden initially) -->
         <a-entity id="gameUI" visible="false">
-            <a-text id="score" value="Score: 0" position="-2 3 -3" color="black" scale="2 2 2"
-                    animation__scoreup="property: scale; to: 2.5 2.5 2.5; dur: 200; startEvents: scoreUpdate"></a-text>
+            <a-text id="score" value="Score: 0" position="-2 3 -3" color="black" scale="2 2 2"></a-text>
             <a-text id="timer" value="Time: 30" position="2 3 -3" color="black" scale="2 2 2"></a-text>
             <a-text id="target" value="Target: 100 points to WIN!" position="0 3 -3" align="center" color="purple" scale="1.5 1.5 1.5"></a-text>
             
@@ -53,83 +43,62 @@
             <a-text value="📦 Boxes = 10pts  🔴 Spheres = 20pts" position="0 2.5 -3" align="center" color="darkblue" scale="1.2 1.2 1.2"></a-text>
         </a-entity>
         
-        <!-- Ground with animated colors -->
-        <a-plane position="0 0 -4" rotation="-90 0 0" width="10" height="10" color="#4CC417"
-                 animation="property: material.color; to: #5ED428; dur: 3000; dir: alternate; loop: true"></a-plane>
+        <!-- Ground -->
+        <a-plane position="0 0 -4" rotation="-90 0 0" width="10" height="10" color="#4CC417"></a-plane>
         
-        <!-- Mole holes with glowing effects -->
-        <a-cylinder id="hole1" position="-2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"
-                    animation="property: material.emissive; to: #2B1503; dur: 2000; dir: alternate; loop: true"></a-cylinder>
-        <a-cylinder id="hole2" position="0 0.01 -2" radius="0.5" height="0.02" color="#8B4513"
-                    animation="property: material.emissive; to: #2B1503; dur: 2500; dir: alternate; loop: true"></a-cylinder>
-        <a-cylinder id="hole3" position="2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"
-                    animation="property: material.emissive; to: #2B1503; dur: 2200; dir: alternate; loop: true"></a-cylinder>
-        <a-cylinder id="hole4" position="-2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"
-                    animation="property: material.emissive; to: #2B1503; dur: 1800; dir: alternate; loop: true"></a-cylinder>
-        <a-cylinder id="hole5" position="0 0.01 -4" radius="0.5" height="0.02" color="#8B4513"
-                    animation="property: material.emissive; to: #2B1503; dur: 2300; dir: alternate; loop: true"></a-cylinder>
-        <a-cylinder id="hole6" position="2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"
-                    animation="property: material.emissive; to: #2B1503; dur: 2100; dir: alternate; loop: true"></a-cylinder>
+        <!-- Mole holes (visual indicators) -->
+        <a-cylinder id="hole1" position="-2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder id="hole2" position="0 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder id="hole3" position="2 0.01 -2" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder id="hole4" position="-2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder id="hole5" position="0 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
+        <a-cylinder id="hole6" position="2 0.01 -4" radius="0.5" height="0.02" color="#8B4513"></a-cylinder>
         
-        <!-- Moles with enhanced animations and point values -->
-        <!-- BOX MOLES (10 points) -->
+        <!-- BOX MOLES (10 points each) -->
         <a-box id="mole1" class="mole" data-points="10" data-shape="box" position="-2 -1 -2" width="0.8" height="0.8" depth="0.8" color="#8B4513" 
-               animation__pop="property: position; to: -2 0.5 -2; dur: 300; startEvents: popup; easing: easeOutElastic"
-               animation__hide="property: position; to: -2 -1 -2; dur: 300; startEvents: hidedown; easing: easeInBack"
-               animation__wobble="property: rotation; to: 5 5 5; dur: 100; dir: alternate; loop: true; startEvents: popup">
+               animation__pop="property: position; to: -2 0.5 -2; dur: 300; startEvents: popup"
+               animation__hide="property: position; to: -2 -1 -2; dur: 300; startEvents: hidedown">
             <!-- Point indicator -->
             <a-text value="10" position="0 0.6 0" align="center" color="yellow" scale="0.8 0.8 0.8"></a-text>
         </a-box>
         
-        <!-- SPHERE MOLES (20 points) -->
+        <!-- SPHERE MOLES (20 points each) - More valuable! -->
         <a-sphere id="mole2" class="mole" data-points="20" data-shape="sphere" position="0 -1 -2" radius="0.4" color="#FF6B6B"
-                  animation__pop="property: position; to: 0 0.5 -2; dur: 300; startEvents: popup; easing: easeOutElastic"
-                  animation__hide="property: position; to: 0 -1 -2; dur: 300; startEvents: hidedown; easing: easeInBack"
-                  animation__wobble="property: rotation; to: -5 5 -5; dur: 120; dir: alternate; loop: true; startEvents: popup"
-                  animation__glow="property: material.emissive; to: #FF2222; dur: 500; dir: alternate; loop: true; startEvents: popup">
+                  animation__pop="property: position; to: 0 0.5 -2; dur: 300; startEvents: popup"
+                  animation__hide="property: position; to: 0 -1 -2; dur: 300; startEvents: hidedown">
             <!-- Point indicator -->
             <a-text value="20" position="0 0.6 0" align="center" color="gold" scale="1 1 1"></a-text>
         </a-sphere>
         
         <a-box id="mole3" class="mole" data-points="10" data-shape="box" position="2 -1 -2" width="0.8" height="0.8" depth="0.8" color="#A0522D"
-               animation__pop="property: position; to: 2 0.5 -2; dur: 300; startEvents: popup; easing: easeOutElastic"
-               animation__hide="property: position; to: 2 -1 -2; dur: 300; startEvents: hidedown; easing: easeInBack"
-               animation__wobble="property: rotation; to: 3 -5 3; dur: 110; dir: alternate; loop: true; startEvents: popup">
+               animation__pop="property: position; to: 2 0.5 -2; dur: 300; startEvents: popup"
+               animation__hide="property: position; to: 2 -1 -2; dur: 300; startEvents: hidedown">
             <a-text value="10" position="0 0.6 0" align="center" color="yellow" scale="0.8 0.8 0.8"></a-text>
         </a-box>
         
         <a-sphere id="mole4" class="mole" data-points="20" data-shape="sphere" position="-2 -1 -4" radius="0.4" color="#4ECDC4"
-                  animation__pop="property: position; to: -2 0.5 -4; dur: 300; startEvents: popup; easing: easeOutElastic"
-                  animation__hide="property: position; to: -2 -1 -4; dur: 300; startEvents: hidedown; easing: easeInBack"
-                  animation__wobble="property: rotation; to: 4 3 -4; dur: 130; dir: alternate; loop: true; startEvents: popup"
-                  animation__glow="property: material.emissive; to: #22CCCC; dur: 500; dir: alternate; loop: true; startEvents: popup">
+                  animation__pop="property: position; to: -2 0.5 -4; dur: 300; startEvents: popup"
+                  animation__hide="property: position; to: -2 -1 -4; dur: 300; startEvents: hidedown">
             <a-text value="20" position="0 0.6 0" align="center" color="gold" scale="1 1 1"></a-text>
         </a-sphere>
         
         <a-box id="mole5" class="mole" data-points="10" data-shape="box" position="0 -1 -4" width="0.8" height="0.8" depth="0.8" color="#654321"
-               animation__pop="property: position; to: 0 0.5 -4; dur: 300; startEvents: popup; easing: easeOutElastic"
-               animation__hide="property: position; to: 0 -1 -4; dur: 300; startEvents: hidedown; easing: easeInBack"
-               animation__wobble="property: rotation; to: -3 4 2; dur: 115; dir: alternate; loop: true; startEvents: popup">
+               animation__pop="property: position; to: 0 0.5 -4; dur: 300; startEvents: popup"
+               animation__hide="property: position; to: 0 -1 -4; dur: 300; startEvents: hidedown">
             <a-text value="10" position="0 0.6 0" align="center" color="yellow" scale="0.8 0.8 0.8"></a-text>
         </a-box>
         
         <a-sphere id="mole6" class="mole" data-points="20" data-shape="sphere" position="2 -1 -4" radius="0.4" color="#9B59B6"
-                  animation__pop="property: position; to: 2 0.5 -4; dur: 300; startEvents: popup; easing: easeOutElastic"
-                  animation__hide="property: position; to: 2 -1 -4; dur: 300; startEvents: hidedown; easing: easeInBack"
-                  animation__wobble="property: rotation; to: 2 -3 5; dur: 125; dir: alternate; loop: true; startEvents: popup"
-                  animation__glow="property: material.emissive; to: #6622AA; dur: 500; dir: alternate; loop: true; startEvents: popup">
+                  animation__pop="property: position; to: 2 0.5 -4; dur: 300; startEvents: popup"
+                  animation__hide="property: position; to: 2 -1 -4; dur: 300; startEvents: hidedown">
             <a-text value="20" position="0 0.6 0" align="center" color="gold" scale="1 1 1"></a-text>
         </a-sphere>
 
-        <!-- Camera with enhanced cursor -->
+        <!-- Camera with cursor for interaction -->
         <a-entity id="rig" position="0 1.6 1">
             <a-camera look-controls wasd-controls>
                 <a-cursor color="red" raycaster="objects: .mole, .clickable" 
-                         animation__click="property: scale; startEvents: click; from: 1 1 1; to: 1.5 1.5 1.5; dur: 100; dir: alternate; easing: easeInOutQuad"
-                         animation__glow="property: material.emissive; to: #FF0000; dur: 500; dir: alternate; loop: true">
-                    <!-- Animated cursor ring -->
-                    <a-ring position="0 0 -0.01" radius-inner="0.02" radius-outer="0.04" color="orange" opacity="0.7"
-                            animation="property: rotation; to: 0 0 360; dur: 2000; loop: true; easing: linear"></a-ring>
+                         animation__click="property: scale; startEvents: click; from: 1 1 1; to: 1.2 1.2 1.2; dur: 150; dir: alternate; easing: easeInOutQuad">
                 </a-cursor>
             </a-camera>
         </a-entity>
@@ -163,9 +132,138 @@
         
         // Function to play hit sound (different pitch for different points)
         function playHitSound(points) {
-            if (!audio
-    </script>
-</body>
-</html>
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Different sound for different point values
+            if (points === 20) {
+                // Higher, more exciting sound for spheres
+                oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.15);
+            } else {
+                // Standard sound for boxes
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            }
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+        
+        // Wait for scene to load before setting up event listeners
+        document.querySelector('a-scene').addEventListener('loaded', function() {
+            console.log('Scene loaded, setting up start button');
+            
+            // Start button click handler
+            startButton.addEventListener('click', function() {
+                console.log('Start button clicked!');
+                if (!gameStarted) {
+                    // Initialize audio on first user interaction
+                    initAudio();
+                    
+                    // Hide instructions and show game UI
+                    instructions.setAttribute('visible', 'false');
+                    gameUI.setAttribute('visible', 'true');
+                    
+                    // Start the game
+                    startGame();
+                }
+            });
+        });
+        
+        // Game functions
+        function startGame() {
+            console.log('Starting game...');
+            gameRunning = true;
+            gameStarted = true;
+            score = 0;
+            timeLeft = 30;
+            updateDisplay();
+            
+            // Start the game timer
+            const gameTimer = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(gameTimer);
+                    endGame();
+                }
+            }, 1000);
+            
+            // Start spawning moles
+            spawnMoles();
+        }
+        
+        function spawnMoles() {
+            if (!gameRunning) return;
+            
+            // Random delay between spawns (1-3 seconds)
+            const delay = Math.random() * 2000 + 1000;
+            
+            setTimeout(() => {
+                if (gameRunning) {
+                    popRandomMole();
+                    spawnMoles(); // Continue spawning
+                }
+            }, delay);
+        }
+        
+        function popRandomMole() {
+            // Get available moles (not currently active)
+            const availableMoles = Array.from(moles).filter(mole => !activeMoles.includes(mole));
+            
+            if (availableMoles.length === 0) return;
+            
+            // Pick a random mole
+            const randomMole = availableMoles[Math.floor(Math.random() * availableMoles.length)];
+            
+            // Add to active moles
+            activeMoles.push(randomMole);
+            
+            // Pop up the mole
+            randomMole.emit('popup');
+            
+            // Hide the mole after 2 seconds
+            setTimeout(() => {
+                if (activeMoles.includes(randomMole)) {
+                    hideMole(randomMole);
+                }
+            }, 2000);
+        }
+        
+        function hideMole(mole) {
+            mole.emit('hidedown');
+            activeMoles = activeMoles.filter(m => m !== mole);
+        }
+        
+        function hitMole(mole) {
+            if (activeMoles.includes(mole)) {
+                // Get points based on shape
+                const points = parseInt(mole.getAttribute('data-points')) || 10;
+                score += points;
+                updateDisplay();
+                hideMole(mole);
+                
+                // Play hit sound effect with different pitch for different points
+                playHitSound(points);
+                
+                // Visual feedback - change color briefly
+                const originalColor = mole.getAttribute('color');
+                mole.setAttribute('color', 'red');
+                setTimeout(() => {
+                    mole.setAttribute('color', originalColor);
+                }, 200);
+                
+                // Create floating score indicator
+                
 
 
