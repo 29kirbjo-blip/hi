@@ -5,122 +5,301 @@
 </head>
 <body>
     <a-scene>
-        <!-- Sky background -->
-        <a-sky color="#87CEEB"></a-sky>
+        <!-- Sky -->
+        <a-sky color="#2C2C2C"></a-sky>
         
-        <!-- Easy target - slow and large -->
-        <a-sphere 
-            id="easy-target"
-            position="0 2 -5" 
-            radius="0.8" 
-            color="green"
-            animation="property: position; to: 3 2 -5; dur: 5000; dir: alternate; loop: true"
-            class="clickable easy">
-        </a-sphere>
+        <!-- Player camera with movement controls -->
+        <a-entity id="player" position="0 1.6 3">
+            <a-camera look-controls wasd-controls>
+                <a-cursor color="white" opacity="0.8" scale="0.5 0.5 0.5"></a-cursor>
+            </a-camera>
+        </a-entity>
         
-        <!-- Medium target - medium speed and size -->
-        <a-sphere 
-            id="medium-target"
-            position="-2 3 -6" 
-            radius="0.5" 
-            color="yellow"
-            animation="property: position; to: 2 1 -6; dur: 3000; dir: alternate; loop: true"
-            class="clickable medium">
-        </a-sphere>
+        <!-- Room walls -->
+        <!-- Floor -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#8B4513"></a-plane>
         
-        <!-- Hard target - fast and small -->
-        <a-sphere 
-            id="hard-target"
-            position="1 1.5 -7" 
-            radius="0.3" 
-            color="red"
-            animation="property: position; to: -3 3.5 -7; dur: 1500; dir: alternate; loop: true"
-            class="clickable hard">
-        </a-sphere>
+        <!-- Walls -->
+        <a-plane position="0 2.5 -5" rotation="0 0 0" width="10" height="5" color="#D2B48C"></a-plane>
+        <a-plane position="0 2.5 5" rotation="0 180 0" width="10" height="5" color="#D2B48C"></a-plane>
+        <a-plane position="-5 2.5 0" rotation="0 90 0" width="10" height="5" color="#D2B48C"></a-plane>
+        <a-plane position="5 2.5 0" rotation="0 -90 0" width="10" height="5" color="#D2B48C"></a-plane>
         
-        <!-- Shrinking target - changes size -->
-        <a-sphere 
-            id="shrinking-target"
-            position="0 4 -8" 
-            radius="0.6" 
-            color="purple"
-            animation__move="property: position; to: 4 1 -8; dur: 4000; dir: alternate; loop: true"
-            animation__shrink="property: radius; to: 0.2; dur: 2000; dir: alternate; loop: true"
-            class="clickable shrinking">
-        </a-sphere>
+        <!-- Ceiling -->
+        <a-plane position="0 5 0" rotation="90 0 0" width="10" height="10" color="#696969"></a-plane>
         
-        <!-- Moving ring target - different shape -->
-        <a-torus 
-            id="ring-target"
-            position="-3 2.5 -6" 
-            radius="0.5" 
-            radius-tubular="0.1"
-            color="orange"
-            animation="property: rotation; to: 0 360 0; dur: 2000; loop: true"
-            animation__move="property: position; to: 3 2.5 -6; dur: 3500; dir: alternate; loop: true"
-            class="clickable ring">
-        </a-torus>
+        <!-- Lighting -->
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="point" position="0 4 0" color="#FFFFFF" intensity="0.8"></a-light>
         
-        <!-- Score display -->
-        <a-text 
-            id="score-text"
-            position="-2 4 -3" 
-            value="Score: 0" 
-            color="white" 
-            scale="2 2 2">
+        <!-- PUZZLE OBJECTS -->
+        
+        <!-- 1. KEY on the table (first object to find) -->
+        <a-entity id="table" position="2 0 -3">
+            <a-box width="2" height="0.8" depth="1" color="#8B4513"></a-box>
+            <a-cylinder id="key" position="0 0.5 0" radius="0.1" height="0.5" color="#FFD700"
+                        animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
+                <a-sphere position="0 0.3 0" radius="0.15" color="#FFD700"></a-sphere>
+            </a-cylinder>
+        </a-entity>
+        
+        <!-- 2. LOCKED CHEST (needs key to open) -->
+        <a-entity id="chest-area" position="-3 0 -2">
+            <a-box id="chest-base" width="1.5" height="0.8" depth="1" color="#654321"></a-box>
+            <a-box id="chest-lid" position="0 0.6 -0.2" width="1.6" height="0.3" depth="1.1" color="#8B4513"
+                   rotation="0 0 0"></a-box>
+            <!-- Lock on chest -->
+            <a-cylinder id="chest-lock" position="0 0.5 0.5" radius="0.1" height="0.2" color="#C0C0C0"
+                        visible="true"></a-cylinder>
+            <!-- Hidden scroll inside chest -->
+            <a-cylinder id="scroll" position="0 1 0" radius="0.1" height="0.8" color="#F5DEB3"
+                        visible="false" rotation="90 0 0">
+            </a-cylinder>
+        </a-entity>
+        
+        <!-- 3. BOOKSHELF with secret book -->
+        <a-entity id="bookshelf" position="-4 0 2">
+            <a-box width="0.3" height="3" depth="2" color="#8B4513"></a-box>
+            <!-- Regular books -->
+            <a-box position="0.2 1 -0.5" width="0.2" height="0.3" depth="0.15" color="#FF0000"></a-box>
+            <a-box position="0.2 1.4 -0.5" width="0.2" height="0.3" depth="0.15" color="#0000FF"></a-box>
+            <a-box position="0.2 1.8 -0.5" width="0.2" height="0.3" depth="0.15" color="#00FF00"></a-box>
+            <!-- SECRET BOOK (glowing) -->
+            <a-box id="secret-book" position="0.2 2.2 -0.5" width="0.2" height="0.3" depth="0.15" color="#800080"
+                   animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 2000">
+            </a-box>
+        </a-entity>
+        
+        <!-- 4. SAFE with number pad (needs code from scroll) -->
+        <a-entity id="safe-area" position="4 1 -2">
+            <a-box id="safe" width="1" height="1" depth="0.5" color="#2F4F4F"></a-box>
+            <a-box id="safe-door" position="0 0 0.3" width="0.8" height="0.8" depth="0.1" color="#696969"></a-box>
+            <!-- Number pad -->
+            <a-text position="0 0.2 0.35" value="1 2 3\n4 5 6\n7 8 9" color="white" scale="0.3 0.3 0.3"></a-text>
+            <!-- Hidden crystal inside safe -->
+            <a-octahedron id="crystal" position="0 0 0" radius="0.2" color="#00FFFF"
+                          visible="false"
+                          animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
+            </a-octahedron>
+        </a-entity>
+        
+        <!-- 5. DOOR (the exit - needs crystal to unlock) -->
+        <a-entity id="door-area" position="0 1.25 4.9">
+            <a-box id="door" width="1.5" height="2.5" depth="0.2" color="#654321"></a-box>
+            <a-cylinder position="0.6 0 0.15" radius="0.05" height="0.1" color="#FFD700"></a-cylinder>
+            <!-- Door lock -->
+            <a-sphere id="door-lock" position="0 0 0.15" radius="0.1" color="#FF0000"></a-sphere>
+        </a-entity>
+        
+        <!-- UI Text -->
+        <a-text id="instructions" 
+                position="-3 4 -2" 
+                value="ESCAPE ROOM: Click objects to solve puzzles and escape!" 
+                color="white" 
+                scale="1.2 1.2 1.2">
         </a-text>
         
-        <!-- Camera with cursor -->
-        <a-camera position="0 1.6 0">
-            <a-cursor 
-                color="white"
-                animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-                raycaster="objects: .clickable">
-            </a-cursor>
-        </a-camera>
-    </a-scene>
-    
-    <script>
-        let score = 0;
-        const scoreText = document.querySelector('#score-text');
+        <a-text id="hint" 
+                position="-2 3.5 -2" 
+                value="Look for a golden key to start..." 
+                color="yellow" 
+                scale="1 1 1">
+        </a-text>
         
-        // Point values for different difficulties
-        const pointValues = {
-            'easy': 10,
-            'medium': 20,
-            'hard': 50,
-            'shrinking': 30,
-            'ring': 25
+        <a-text id="status" 
+                position="-2 3 -2" 
+                value="Items collected: 0/4" 
+                color="lightblue" 
+                scale="1 1 1">
+        </a-text>
+        
+        <a-text id="victory-message" 
+                position="-2 4.5 -2" 
+                value="" 
+                color="gold" 
+                scale="2 2 2" 
+                visible="false">
+        </a-text>
+    </a-scene>
+
+    <script>
+        // Game state
+        let gameState = {
+            hasKey: false,
+            chestOpened: false,
+            hasScroll: false,
+            secretBookFound: false,
+            safeOpened: false,
+            hasCrystal: false,
+            doorUnlocked: false,
+            itemsCollected: 0
         };
         
-        // Add click event listeners to all targets
-        document.querySelectorAll('.clickable').forEach(target => {
-            target.addEventListener('click', function() {
-                // Determine target difficulty
-                let difficulty = 'easy';
-                if (this.classList.contains('medium')) difficulty = 'medium';
-                else if (this.classList.contains('hard')) difficulty = 'hard';
-                else if (this.classList.contains('shrinking')) difficulty = 'shrinking';
-                else if (this.classList.contains('ring')) difficulty = 'ring';
-                
-                // Add points based on difficulty
-                score += pointValues[difficulty];
-                scoreText.setAttribute('value', `Score: ${score}`);
-                
-                // Target hit effect
-                this.setAttribute('visible', false);
-                console.log(`${difficulty} target hit! +${pointValues[difficulty]} points`);
-                
-                // Respawn target after different times based on difficulty
-                const respawnTime = difficulty === 'hard' ? 1000 : 
-                                  difficulty === 'shrinking' ? 1500 : 2000;
-                
-                setTimeout(() => {
-                    this.setAttribute('visible', true);
-                }, respawnTime);
-            });
+        // Puzzle sequence and interactions
+        
+        // 1. KEY - First interaction
+        document.querySelector('#key').addEventListener('click', function() {
+            if (!gameState.hasKey) {
+                gameState.hasKey = true;
+                gameState.itemsCollected++;
+                this.setAttribute('visible', 'false');
+                updateHint("Great! You found the key! Now find something to unlock...");
+                updateStatus();
+            }
         });
+        
+        // 2. CHEST - Needs key
+        document.querySelector('#chest-base').addEventListener('click', function() {
+            if (gameState.hasKey && !gameState.chestOpened) {
+                gameState.chestOpened = true;
+                gameState.itemsCollected++;
+                
+                // Remove lock and open chest
+                document.querySelector('#chest-lock').setAttribute('visible', 'false');
+                document.querySelector('#chest-lid').setAttribute('animation', 
+                    'property: rotation; to: -45 0 0; dur: 1000');
+                
+                // Show scroll
+                setTimeout(() => {
+                    document.querySelector('#scroll').setAttribute('visible', 'true');
+                    updateHint("The chest is open! Click the scroll inside to read it.");
+                }, 1000);
+                
+                updateStatus();
+            } else if (!gameState.hasKey) {
+                updateHint("This chest is locked. You need a key!");
+            }
+        });
+        
+        // 3. SCROLL - Shows code
+        document.querySelector('#scroll').addEventListener('click', function() {
+            if (gameState.chestOpened && !gameState.hasScroll) {
+                gameState.hasScroll = true;
+                gameState.itemsCollected++;
+                this.setAttribute('visible', 'false');
+                updateHint("The scroll says: 'Code: 537'. Look for a purple book on the shelf!");
+                updateStatus();
+            }
+        });
+        
+        // 4. SECRET BOOK - Reveals safe location
+        document.querySelector('#secret-book').addEventListener('click', function() {
+            if (gameState.hasScroll && !gameState.secretBookFound) {
+                gameState.secretBookFound = true;
+                this.setAttribute('color', '#FF00FF');
+                updateHint("The book reveals: 'Use code 537 on the safe!' Look for the gray safe.");
+            }
+        });
+        
+        // 5. SAFE - Needs code from scroll
+        document.querySelector('#safe').addEventListener('click', function() {
+            if (gameState.hasScroll && gameState.secretBookFound && !gameState.safeOpened) {
+                gameState.safeOpened = true;
+                gameState.itemsCollected++;
+                
+                // Open safe door
+                document.querySelector('#safe-door').setAttribute('animation',
+                    'property: rotation; to: 0 -90 0; dur: 1000');
+                
+                // Show crystal
+                setTimeout(() => {
+                    document.querySelector('#crystal').setAttribute('visible', 'true');
+                    updateHint("The safe is open! Click the crystal to take it.");
+                }, 1000);
+                
+                updateStatus();
+            } else if (!gameState.hasScroll) {
+                updateHint("The safe needs a code. Find clues first!");
+            } else if (!gameState.secretBookFound) {
+                updateHint("You have the code but need to find where to use it!");
+            }
+        });
+        
+        // 6. CRYSTAL - Final key item
+        document.querySelector('#crystal').addEventListener('click', function() {
+            if (gameState.safeOpened && !gameState.hasCrystal) {
+                gameState.hasCrystal = true;
+                this.setAttribute('visible', 'false');
+                updateHint("You have the crystal! Now you can unlock the door and escape!");
+                updateStatus();
+            }
+        });
+        
+        // 7. DOOR - Final escape
+        document.querySelector('#door').addEventListener('click', function() {
+            if (gameState.hasCrystal && !gameState.doorUnlocked) {
+                gameState.doorUnlocked = true;
+                
+                // Change door lock color and open door
+                document.querySelector('#door-lock').setAttribute('color', '#00FF00');
+                this.setAttribute('animation', 'property: position; to: -1.5 1.25 4.9; dur: 2000');
+                
+                // Victory!
+                setTimeout(() => {
+                    showVictory();
+                }, 1000);
+            } else if (!gameState.hasCrystal) {
+                updateHint("The door is locked. You need something special to open it...");
+            }
+        });
+        
+        function updateHint(message) {
+            document.querySelector('#hint').setAttribute('value', message);
+        }
+        
+        function updateStatus() {
+            document.querySelector('#status').setAttribute('value', 
+                `Items collected: ${gameState.itemsCollected}/4`);
+        }
+        
+        function showVictory() {
+            const victoryMsg = document.querySelector('#victory-message');
+            victoryMsg.setAttribute('value', 'CONGRATULATIONS! YOU ESCAPED!');
+            victoryMsg.setAttribute('visible', 'true');
+            victoryMsg.setAttribute('animation', 
+                'property: scale; to: 3 3 3; dir: alternate; loop: true; dur: 1000');
+            
+            // Hide other UI
+            document.querySelector('#instructions').setAttribute('visible', 'false');
+            document.querySelector('#hint').setAttribute('visible', 'false');
+            document.querySelector('#status').setAttribute('visible', 'false');
+            
+            // Add celebration effect
+            createCelebrationEffect();
+        }
+        
+        function createCelebrationEffect() {
+            // Create colorful particles
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('a-sphere');
+                    const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
+                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particle.setAttribute('position', 
+                        `${(Math.random() - 0.5) * 8} ${Math.random() * 3 + 1} ${(Math.random() - 0.5) * 8}`);
+                    particle.setAttribute('radius', '0.1');
+                    particle.setAttribute('color', randomColor);
+                    particle.setAttribute('animation', 
+                        'property: position; to: 0 6 0; dur: 3000');
+                    particle.setAttribute('animation__fade', 
+                        'property: opacity; to: 0; dur: 3000');
+                    
+                    document.querySelector('a-scene').appendChild(particle);
+                    
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+        
+        // Initial hint
+        setTimeout(() => {
+            updateHint("Look around the room. Start by finding the golden key!");
+        }, 2000);
     </script>
 </body>
 </html>
+
 
