@@ -83,7 +83,7 @@
             </a-octahedron>
         </a-entity>
         
-        <!-- 5. DOOR (the exit - needs crystal to unlock) -->
+        <!-- 5. DOOR (the exit - automatically unlocks when safe opens) -->
         <a-entity id="door-area" position="0 1.25 4.9">
             <a-box id="door" width="1.5" height="2.5" depth="0.2" color="#654321"></a-box>
             <a-cylinder position="0.6 0 0.15" radius="0.05" height="0.1" color="#FFD700"></a-cylinder>
@@ -108,7 +108,7 @@
         
         <a-text id="status" 
                 position="-2 3 -2" 
-                value="Items collected: 0/4" 
+                value="Items collected: 0/3" 
                 color="lightblue" 
                 scale="1 1 1">
         </a-text>
@@ -130,7 +130,6 @@
             hasScroll: false,
             secretBookFound: false,
             safeOpened: false,
-            hasCrystal: false,
             doorUnlocked: false,
             itemsCollected: 0
         };
@@ -191,21 +190,27 @@
             }
         });
         
-        // 5. SAFE - Needs code from scroll
+        // 5. SAFE - Needs code from scroll, automatically unlocks door
         document.querySelector('#safe').addEventListener('click', function() {
             if (gameState.hasScroll && gameState.secretBookFound && !gameState.safeOpened) {
                 gameState.safeOpened = true;
-                gameState.itemsCollected++;
+                gameState.doorUnlocked = true;
                 
                 // Open safe door
                 document.querySelector('#safe-door').setAttribute('animation',
                     'property: rotation; to: 0 -90 0; dur: 1000');
                 
-                // Show crystal
+                // Unlock the exit door immediately
+                document.querySelector('#door-lock').setAttribute('color', '#00FF00');
+                document.querySelector('#door').setAttribute('animation', 
+                    'property: position; to: -1.5 1.25 4.9; dur: 2000');
+                
+                // Show crystal and victory
                 setTimeout(() => {
                     document.querySelector('#crystal').setAttribute('visible', 'true');
-                    updateHint("The safe is open! Click the crystal to take it.");
-                }, 1000);
+                    updateHint("Safe opened! The door is now unlocked! You escaped!");
+                    showVictory();
+                }, 2000);
                 
                 updateStatus();
             } else if (!gameState.hasScroll) {
@@ -215,41 +220,13 @@
             }
         });
         
-        // 6. CRYSTAL - Final key item
-        document.querySelector('#crystal').addEventListener('click', function() {
-            if (gameState.safeOpened && !gameState.hasCrystal) {
-                gameState.hasCrystal = true;
-                this.setAttribute('visible', 'false');
-                updateHint("You have the crystal! Now you can unlock the door and escape!");
-                updateStatus();
-            }
-        });
-        
-        // 7. DOOR - Final escape
-        document.querySelector('#door').addEventListener('click', function() {
-            if (gameState.hasCrystal && !gameState.doorUnlocked) {
-                gameState.doorUnlocked = true;
-                
-                // Change door lock color and open door
-                document.querySelector('#door-lock').setAttribute('color', '#00FF00');
-                this.setAttribute('animation', 'property: position; to: -1.5 1.25 4.9; dur: 2000');
-                
-                // Victory!
-                setTimeout(() => {
-                    showVictory();
-                }, 1000);
-            } else if (!gameState.hasCrystal) {
-                updateHint("The door is locked. You need something special to open it...");
-            }
-        });
-        
         function updateHint(message) {
             document.querySelector('#hint').setAttribute('value', message);
         }
         
         function updateStatus() {
             document.querySelector('#status').setAttribute('value', 
-                `Items collected: ${gameState.itemsCollected}/4`);
+                `Items collected: ${gameState.itemsCollected}/3`);
         }
         
         function showVictory() {
@@ -301,5 +278,3 @@
     </script>
 </body>
 </html>
-
-
